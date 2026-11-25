@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-canvas-width="1440" data-canvas-height="900" style="width:1440px;height:900px;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兔茸小屋 · 概念界面原型</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 1440px; height: 900px; overflow: hidden; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      background: #F3E7D8;
+      color: #5B4636;
+    }
+    :root {
+      --cream: #FFF7EE;
+      --card: #FFFFFF;
+      --yellow: #FFD98A;
+      --pink: #FFA8BE;
+      --blue: #A6DCEF;
+      --brown: #7A5A44;
+      --text: #5B4636;
+      --text-soft: #9A7E68;
+      --shadow: 0 10px 30px rgba(122, 90, 68, 0.16);
+      --radius: 22px;
+    }
+
+    main[data-canvas-root] {
+      width: 1440px; height: 900px;
+      display: flex; flex-direction: column;
+      padding: 22px 28px; gap: 18px;
+    }
+
+    /* 顶栏 */
+    .topbar {
+      display: flex; align-items: center; gap: 18px;
+      height: 64px; flex: 0 0 64px;
+      background: var(--card); border-radius: var(--radius);
+      padding: 0 22px; box-shadow: var(--shadow);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; }
+    .logo .dot { width: 34px; height: 34px; border-radius: 50%; background: var(--pink); display: grid; place-items: center; font-size: 18px; }
+    .tabs { display: flex; gap: 10px; margin-left: 24px; }
+    .tab {
+      border: none; background: #F3E7D8; color: var(--text-soft);
+      padding: 10px 20px; border-radius: 16px; font-size: 16px; cursor: pointer;
+      transition: all .15s ease;
+    }
+    .tab.active { background: var(--yellow); color: var(--brown); font-weight: 600; }
+    .device-switch { margin-left: auto; display: flex; gap: 8px; background: #F3E7D8; padding: 6px; border-radius: 14px; }
+    .device-switch button { border: none; background: transparent; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; color: var(--text-soft); }
+    .device-switch button.active { background: var(--card); color: var(--brown); font-weight: 600; box-shadow: 0 2px 6px rgba(122,90,68,.15); }
+    .prototype-tag { font-size: 13px; color: var(--text-soft); }
+
+    /* 主区 */
+    .stage { flex: 1; display: flex; gap: 18px; min-height: 0; }
+    .view { display: none; width: 100%; height: 100%; gap: 18px; min-height: 0; }
+    .view.active { display: flex; }
+
+    .panel {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 20px; min-height: 0;
+    }
+    .panel h3 { font-size: 17px; margin-bottom: 14px; color: var(--brown); }
+    .muted { font-size: 13px; color: var(--text-soft); }
+
+    /* ===== 装扮视图 ===== */
+    #view-decorate { }
+    .decor-left { width: 250px; flex: 0 0 250px; display: flex; flex-direction: column; gap: 16px; }
+    .prop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .prop {
+      background: #FBF1E6; border-radius: 16px; aspect-ratio: 1;
+      display: grid; place-items: center; font-size: 24px; cursor: pointer; border: 2px solid transparent;
+    }
+    .prop.selected { border-color: var(--yellow); background: #FFF3D9; }
+    .decor-center { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .room-preview {
+      flex: 1; border-radius: var(--radius); overflow: hidden; position: relative;
+      background: #EAD9C6;
+    }
+    .room-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .room-preview .room-label {
+      position: absolute; left: 16px; bottom: 16px; background: rgba(255,247,238,.9);
+      padding: 8px 14px; border-radius: 12px; font-size: 14px;
+    }
+    .decor-right { width: 270px; flex: 0 0 270px; display: flex; flex-direction: column; gap: 16px; }
+    .avatar-card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .avatar-card img { width: 150px; height: 150px; object-fit: cover; border-radius: 20px; }
+    .avatar-card .name { font-size: 18px; font-weight: 600; }
+    .affection { width: 100%; }
+    .affection .bar { height: 12px; border-radius: 8px; background: #F3E7D8; overflow: hidden; }
+    .affection .fill { height: 100%; width: 68%; background: linear-gradient(90deg, var(--pink), var(--yellow)); border-radius: 8px; }
+    .stat-row { display: flex; justify-content: space-between; font-size: 14px; }
+    .outfit-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .outfit { background: #FBF1E6; border-radius: 14px; aspect-ratio: 1; display: grid; place-items: center; font-size: 20px; }
+
+    /* ===== 聊天视图 ===== */
+    #view-chat { }
+    .chat-left { width: 300px; flex: 0 0 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    .chat-left img { width: 180px; height: 180px; object-fit: cover; border-radius: 24px; }
+    .chat-main { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .chat-window { flex: 1; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+    .bubble { max-width: 62%; padding: 14px 18px; border-radius: 18px; font-size: 16px; line-height: 1.5; }
+    .bubble.rabbit { background: #FFF3D9; align-self: flex-start; border-bottom-left-radius: 6px; }
+    .bubble.player { background: var(--blue); align-self: flex-end; border-bottom-right-radius: 6px; }
+    .chat-topics { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { border: 2px solid var(--yellow); background: var(--card); color: var(--brown); padding: 10px 16px; border-radius: 16px; font-size: 15px; cursor: pointer; }
+    .chip:hover { background: #FFF3D9; }
+    .chip.active { background: var(--yellow); border-color: var(--yellow); font-weight: 600; }
+    .chat-input { display: flex; gap: 10px; }
+    .chat-input input { flex: 1; border: 2px solid #F3E7D8; border-radius: 16px; padding: 12px 16px; font-size: 15px; outline: none; }
+    .chat-input button { border: none; background: var(--pink); color: #fff; border-radius: 16px; padding: 12px 22px; font-size: 15px; cursor: pointer; }
+
+    /* ===== 出门视图 ===== */
+    #view-goout { flex-direction: row; }
+    .go-left { width: 360px; flex: 0 0 360px; display: flex; flex-direction: column; gap: 18px; min-height: 0; }
+    .go-right { flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0; min-height: 0; }
+    .map-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .map-panel h3 { margin-bottom: 4px; }
+    .map-stage { flex: 1; min-height: 0; border-radius: 18px; background: #F6ECDF; overflow: hidden; position: relative; }
+    .map-stage svg { width: 100%; height: 100%; }
+    .legend { display: flex; gap: 16px; margin-top: 12px; font-size: 13px; color: var(--text-soft); }
+    .legend .key { display: inline-flex; align-items: center; gap: 6px; }
+    .legend .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .map-note { font-size: 12px; color: var(--text-soft); margin-top: 6px; }
+    .dest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; min-height: 0; }
+    .dest { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
+    .dest img { width: 100%; height: 150px; object-fit: cover; }
+    .dest-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .dest-body h3 { margin: 0; }
+    .rewards { display: flex; gap: 8px; flex-wrap: wrap; }
+    .reward { background: #FBF1E6; border-radius: 12px; padding: 6px 10px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+    .dest-body .go { margin-top: auto; border: none; background: var(--yellow); color: var(--brown); border-radius: 14px; padding: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
+
+    /* 足迹时间线 */
+    .timeline { flex: 1; display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow: hidden; }
+    .timeline h3 { margin-bottom: 10px; }
+    .tl-list { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+    .tl-item { display: flex; gap: 14px; align-items: flex-start; }
+    .tl-dot { flex: 0 0 auto; width: 14px; height: 14px; border-radius: 50%; background: var(--yellow); margin-top: 5px; box-shadow: 0 0 0 5px #FFF3D9; }
+    .tl-item.old .tl-dot { background: #D8C6B4; box-shadow: 0 0 0 5px #F3E7D8; }
+    .tl-body { flex: 1; }
+    .tl-body .tl-place { font-size: 15px; font-weight: 600; }
+    .tl-body .tl-meta { font-size: 13px; color: var(--text-soft); }
+
+    /* 记忆 */
+    .memory { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .memory h3 { font-size: 15px; margin-bottom: 0; }
+    .memory .mem-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .memory .mem-label { font-size: 13px; color: var(--text-soft); width: 64px; }
+    .mem-tag { background: #FBF1E6; border-radius: 12px; padding: 6px 12px; font-size: 13px; }
+
+    /* 地点回忆弹层 */
+    .tl-item { cursor: pointer; border-radius: 14px; }
+    .tl-item:hover { background: #FBF1E6; }
+    .map-stage .lit { cursor: pointer; }
+    .map-stage .lit:hover circle { stroke: #FFA8BE; stroke-width: 2.5; }
+    .memory-modal { position: absolute; inset: 0; z-index: 50; display: none; }
+    .memory-modal.open { display: flex; }
+    .modal-mask { position: absolute; inset: 0; background: rgba(43,33,26,.45); }
+    .modal-card { position: relative; margin: auto; width: 760px; max-width: 86%; background: var(--card); border-radius: 26px; padding: 24px; box-shadow: var(--shadow); }
+    .modal-card header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+    .modal-card header h3 { font-size: 20px; color: var(--brown); margin-bottom: 4px; }
+    .mm-close { border: none; background: #F3E7D8; width: 36px; height: 36px; border-radius: 12px; font-size: 18px; cursor: pointer; flex: 0 0 auto; }
+    .mm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .mm-card { border-radius: 18px; overflow: hidden; background: #FBF1E6; }
+    .mm-card .mm-thumb { position: relative; aspect-ratio: 16 / 10; }
+    .mm-card .mm-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .mm-card .mm-label { padding: 10px 14px; font-size: 14px; font-weight: 600; }
+
+    .out-bottom { flex: 0 0 64px; display: flex; align-items: center; gap: 18px; padding: 0 8px; }
+    .pack { display: flex; gap: 10px; }
+    .pack .slot { width: 52px; height: 52px; border-radius: 14px; background: #FBF1E6; display: grid; place-items: center; font-size: 22px; }
+
+    /* ===== 相册视图 ===== */
+    #view-album { flex-direction: column; }
+    .album-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 12px; }
+    .album-bar .spacer { margin-left: auto; }
+    .upload-btn { border: none; background: var(--pink); color: #fff; border-radius: 14px; padding: 10px 18px; font-size: 15px; cursor: pointer; }
+    .album-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 18px; min-height: 0; }
+    .album-card { background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+    .album-card .thumb { position: relative; flex: 1; min-height: 0; }
+    .album-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .album-card .meta { padding: 12px 16px; }
+    .album-card .meta .t { font-size: 15px; font-weight: 600; }
+    .album-card .meta .d { font-size: 13px; color: var(--text-soft); }
+    .video-badge { position: absolute; right: 12px; bottom: 12px; background: rgba(43,33,26,.78); color: #fff; border-radius: 10px; padding: 4px 10px; font-size: 12px; display: flex; gap: 6px; align-items: center; }
+    .fav { position: absolute; left: 12px; top: 12px; background: rgba(255,247,238,.9); border-radius: 10px; padding: 4px 8px; font-size: 13px; }
+
+    /* 实景合照面板 */
+    .real-photo { flex: 0 0 124px; display: flex; align-items: center; gap: 18px; border: 2px dashed var(--yellow); border-radius: var(--radius); padding: 18px 22px; background: #FFFDF8; }
+    .real-photo .rp-icon { width: 64px; height: 64px; border-radius: 18px; background: #FFF3D9; display: grid; place-items: center; font-size: 30px; }
+    .real-photo .rp-body { flex: 1; }
+    .real-photo .rp-body h3 { margin-bottom: 6px; }
+    .rp-actions { display: flex; gap: 10px; align-items: center; }
+    .rp-primary { border: none; background: var(--yellow); color: var(--brown); border-radius: 14px; padding: 12px 20px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .rp-placeholder { font-size: 13px; color: var(--text-soft); border: 1px solid #F3E7D8; border-radius: 12px; padding: 10px 14px; }
+
+    /* ===== 手机端框架 ===== */
+    body[data-device="mobile"] .stage { align-items: center; justify-content: center; }
+    body[data-device="mobile"] .view.active { flex-direction: column; align-items: stretch; width: 390px; height: 844px; }
+    body[data-device="mobile"] .panel { border-radius: 26px; }
+    body[data-device="mobile"] .decor-left,
+    body[data-device="mobile"] .decor-right { width: 100%; flex: 0 0 auto; }
+    body[data-device="mobile"] .decor-left { order: 2; }
+    body[data-device="mobile"] .decor-center { order: 1; }
+    body[data-device="mobile"] .chat-left { width: 100%; flex: 0 0 auto; flex-direction: row; }
+    body[data-device="mobile"] .chat-left img { width: 80px; height: 80px; }
+    body[data-device="mobile"] .dest-grid { grid-template-columns: 1fr; }
+    body[data-device="mobile"] .dest img { height: 130px; }
+    body[data-device="mobile"] .album-grid { grid-template-columns: 1fr; }
+    body[data-device="mobile"] .real-photo { flex: 0 0 auto; flex-direction: column; align-items: stretch; }
+    body[data-device="mobile"] #view-goout { flex-direction: column; }
+    body[data-device="mobile"] .go-left { width: 100%; flex: 0 0 auto; }
+    body[data-device="mobile"] .map-stage { height: 220px; }
+    .phone-frame {
+      display: none; width: 390px; height: 844px; background: #2B211A;
+      border-radius: 40px; padding: 14px; box-shadow: var(--shadow);
+    }
+    body[data-device="mobile"] .phone-frame { display: block; }
+    body[data-device="desktop"] .phone-frame { display: none; }
+    body[data-device="mobile"] .desktop-canvas { display: none; }
+  </style>
+</head>
+<body data-device="desktop">
+  <main data-canvas-root style="width:1440px;height:900px;position:relative;">
+    <header class="topbar">
+      <div class="logo"><span class="dot">🐰</span>兔茸小屋</div>
+      <nav class="tabs">
+        <button class="tab active" data-view="decorate">装扮</button>
+        <button class="tab" data-view="chat">聊天</button>
+        <button class="tab" data-view="goout">出门</button>
+        <button class="tab" data-view="album">相册</button>
+      </nav>
+      <div class="device-switch">
+        <button class="active" data-device-btn="desktop">电脑端</button>
+        <button data-device-btn="mobile">手机端</button>
+      </div>
+      <span class="prototype-tag">概念原型 · 非真实游戏数据</span>
+    </header>
+
+    <section class="stage">
+      <!-- 电脑端画布 -->
+      <div class="desktop-canvas" style="display:contents; width:100%; height:100%;">
+        <!-- 装扮 -->
+        <div class="view active" id="view-decorate">
+          <aside class="panel decor-left">
+            <h3>家具道具</h3>
+            <div class="prop-grid">
+              <div class="prop selected" title="云朵沙发">🛋️</div>
+              <div class="prop" title="星星小床">🛏️</div>
+              <div class="prop" title="圆形茶几">🪵</div>
+              <div class="prop" title="长绒地毯">🧶</div>
+              <div class="prop" title="蘑菇台灯">💡</div>
+              <div class="prop" title="云朵挂饰">☁️</div>
+              <div class="prop" title="星星挂饰">⭐</div>
+              <div class="prop" title="绿植">🪴</div>
+              <div class="prop" title="气球">🎈</div>
+            </div>
+            <h3>服饰配件</h3>
+            <div class="outfit-grid">
+              <div class="outfit">🧣</div>
+              <div class="outfit">🎀</div>
+              <div class="outfit">👒</div>
+            </div>
+          </aside>
+
+          <div class="panel decor-center">
+            <div class="room-preview">
+              <img src="https://aka.doubaocdn.com/s/dRfurSyRSw" alt="小屋装扮预览">
+              <div class="room-label">当前房间 · 棉花糖午后</div>
+            </div>
+          </div>
+
+          <aside class="panel decor-right">
+            <div class="avatar-card">
+              <img src="https://aka.doubaocdn.com/s/2pYA4fuyXa" alt="兔子角色">
+              <div class="name">茸茸</div>
+              <div class="affection">
+                <div class="bar"><div class="fill"></div></div>
+                <div class="stat-row" style="margin-top:6px;"><span>好感度</span><span>68 / 100</span></div>
+              </div>
+            </div>
+            <div class="stat-row"><span>金币</span><span>1,280</span></div>
+            <div class="stat-row"><span>已收集家具</span><span>24 件</span></div>
+            <p class="muted">拖动家具到房间即可摆放；成套布置会触发兔子专属动作。</p>
+          </aside>
+        </div>
+
+        <!-- 聊天 -->
+        <div class="view" id="view-chat">
+          <aside class="panel chat-left">
+            <img src="https://aka.doubaocdn.com/s/2pYA4fuyXa" alt="兔子角色">
+            <div class="name" style="font-size:18px;font-weight:600;">茸茸</div>
+            <div class="muted">心情：开心 · 陪伴等级 3</div>
+            <div class="memory">
+              <h3>她记得的事</h3>
+              <div class="mem-line">
+                <span class="mem-label">去过</span>
+                <span class="mem-tag">福州</span>
+                <span class="mem-tag">杭州</span>
+                <span class="mem-tag">厦门</span>
+              </div>
+              <div class="mem-line">
+                <span class="mem-label">聊过</span>
+                <span class="mem-tag">云朵抱枕</span>
+                <span class="mem-tag">房间布置</span>
+                <span class="mem-tag">天气</span>
+              </div>
+            </div>
+          </aside>
+          <div class="panel chat-main">
+            <div class="chat-window" id="chat-window">
+              <div class="bubble rabbit">回来啦？今天小屋晒到太阳啦 ☁️</div>
+              <div class="bubble player">嗯，我给你换了新的云朵抱枕。</div>
+              <div class="bubble rabbit">软软的，我很喜欢！窗边的茶杯还温温的。</div>
+            </div>
+            <div class="chat-topics">
+              <button class="chip" data-reply="今天在外面遇到什么好玩的啦？">今天玩得开心吗</button>
+              <button class="chip" data-reply="最喜欢哪个房间角落呀？">聊聊房间布置</button>
+              <button class="chip" data-reply="想吃什么点心呢？">想吃什么点心</button>
+              <button class="chip" data-reply="今天天气真好呢。">说说天气</button>
+            </div>
+            <div class="chat-input">
+              <input type="text" placeholder="和茸茸说点什么…">
+              <button id="send-btn">发送</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 出门 -->
+        <div class="view" id="view-goout">
+          <aside class="go-left">
+            <section class="panel map-panel">
+              <h3>足迹地图</h3>
+              <div class="map-stage">
+                <svg viewBox="0 0 360 300" role="img" aria-label="足迹示意地图">
+                  <path d="M168 78 L196 178 L196 214 L178 236" fill="none" stroke="#FFD98A" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>
+                  <!-- 未前往 -->
+                  <g fill="#D8C6B4">
+                    <circle cx="180" cy="40" r="7"/>
+                    <circle cx="168" cy="78" r="7"/>
+                    <circle cx="130" cy="130" r="7"/>
+                    <circle cx="95" cy="160" r="7"/>
+                    <circle cx="150" cy="210" r="7"/>
+                  </g>
+                  <g fill="#9A7E68" font-size="12">
+                    <text x="192" y="44">哈尔滨</text>
+                    <text x="180" y="82">北京</text>
+                    <text x="86" y="134">西安</text>
+                    <text x="51" y="164">成都</text>
+                    <text x="112" y="214">广州</text>
+                  </g>
+                  <!-- 已点亮（可点击回看回忆） -->
+                  <g class="lit" data-place="hangzhou">
+                    <circle cx="196" cy="178" r="8" fill="#FFD98A" stroke="#fff" stroke-width="2"/>
+                    <text x="210" y="182" fill="#7A5A44" font-size="12" font-weight="600">杭州</text>
+                  </g>
+                  <g class="lit" data-place="xiamen">
+                    <circle cx="178" cy="236" r="8" fill="#FFD98A" stroke="#fff" stroke-width="2"/>
+                    <text x="132" y="240" fill="#7A5A44" font-size="12" font-weight="600">厦门</text>
+                  </g>
+                  <g class="lit" data-place="fuzhou">
+                    <circle cx="196" cy="214" r="10" fill="#FFA8BE" stroke="#fff" stroke-width="2"/>
+                    <text x="210" y="218" fill="#7A5A44" font-size="12" font-weight="600">福州 · 当前</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="legend">
+                <span class="key"><span class="dot" style="background:#FFD98A"></span>已点亮</span>
+                <span class="key"><span class="dot" style="background:#D8C6B4"></span>未前往</span>
+              </div>
+              <div class="map-note">示意地图 · 非真实行政区划，按省市点亮足迹</div>
+            </section>
+          </aside>
+
+          <div class="go-right">
+            <div class="dest-grid">
+              <article class="panel dest">
+                <img src="https://aka.doubaocdn.com/s/lens2cYaIU" alt="小镇公园">
+                <div class="dest-body">
+                  <h3>小镇公园</h3>
+                  <p class="muted">草地、长椅与点心小摊，适合悠闲散步。</p>
+                  <div class="rewards">
+                    <span class="reward">🌸 花瓣</span>
+                    <span class="reward">🪨 小石子</span>
+                    <span class="reward">📷 合影</span>
+                  </div>
+                  <button class="go">出发散步</button>
+                </div>
+              </article>
+              <article class="panel dest">
+                <img src="https://aka.doubaocdn.com/s/vaCObKLWaJ" alt="彩色花田">
+                <div class="dest-body">
+                  <h3>彩色花田</h3>
+                  <p class="muted">蝴蝶飞过花丛小径，能采集插花素材。</p>
+                  <div class="rewards">
+                    <span class="reward">🌷 花种</span>
+                    <span class="reward">🦋 蝴蝶标本</span>
+                  </div>
+                  <button class="go">去花田</button>
+                </div>
+              </article>
+              <article class="panel dest">
+                <img src="https://aka.doubaocdn.com/s/jDwQepOD9e" alt="夜市小吃街">
+                <div class="dest-body">
+                  <h3>夜市小吃街</h3>
+                  <p class="muted">手抓饼、酱香饼、烤馕，带回点心与小摆件。</p>
+                  <div class="rewards">
+                    <span class="reward">🫓 烤馕</span>
+                    <span class="reward">🥞 手抓饼</span>
+                    <span class="reward">🧸 小玩偶</span>
+                  </div>
+                  <button class="go">逛夜市</button>
+                </div>
+              </article>
+            </div>
+
+            <div class="real-photo">
+              <div class="rp-icon">📷</div>
+              <div class="rp-body">
+                <h3>带我去这里 · 实景合照</h3>
+                <p class="muted">上传一张现实风景照，保留真实环境，把茸茸放进画面；兔子形象保持不变，光向与阴影贴合现场。</p>
+              </div>
+              <div class="rp-actions">
+                <span class="rp-placeholder">🎬 实景短视频：暂未开放</span>
+                <button class="rp-primary">上传照片并合影</button>
+              </div>
+            </div>
+
+            <section class="panel timeline">
+              <h3>足迹时间线</h3>
+              <div class="tl-list">
+                <div class="tl-item" data-place="fuzhou">
+                  <div class="tl-dot"></div>
+                  <div class="tl-body">
+                    <div class="tl-place">福州 · 小屋周边散步</div>
+                    <div class="tl-meta">今天 · 带回合影 1 张</div>
+                  </div>
+                </div>
+                <div class="tl-item old" data-place="hangzhou">
+                  <div class="tl-dot"></div>
+                  <div class="tl-body">
+                    <div class="tl-place">杭州 · 西湖边漫步</div>
+                    <div class="tl-meta">11 月 23 日 · 花瓣、合影</div>
+                  </div>
+                </div>
+                <div class="tl-item old" data-place="xiamen">
+                  <div class="tl-dot"></div>
+                  <div class="tl-body">
+                    <div class="tl-place">厦门 · 海边夜市</div>
+                    <div class="tl-meta">11 月 20 日 · 烤馕、小玩偶</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="out-bottom panel">
+              <strong>今日背包</strong>
+              <div class="pack">
+                <div class="slot">🌸</div>
+                <div class="slot">🪨</div>
+                <div class="slot">📷</div>
+                <div class="slot">🫓</div>
+                <div class="slot">＋</div>
+              </div>
+              <span class="muted" style="margin-left:auto;">今日出游 1 / 3 次</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 相册 -->
+        <div class="view" id="view-album">
+          <div class="panel album-bar">
+            <button class="chip active">全部</button>
+            <button class="chip">照片</button>
+            <button class="chip">视频</button>
+            <button class="chip">收藏</button>
+            <span class="spacer"></span>
+            <button class="upload-btn">＋ 上传照片 / 视频</button>
+          </div>
+          <div class="album-grid">
+            <article class="album-card">
+              <div class="thumb">
+                <img src="https://aka.doubaocdn.com/s/dRfurSyRSw" alt="小屋午后">
+                <span class="fav">♥ 收藏</span>
+              </div>
+              <div class="meta"><div class="t">小屋的午后</div><div class="d">今天 · 装扮留念</div></div>
+            </article>
+            <article class="album-card">
+              <div class="thumb">
+                <img src="https://aka.doubaocdn.com/s/lens2cYaIU" alt="公园散步">
+              </div>
+              <div class="meta"><div class="t">公园散步</div><div class="d">昨天 · 小镇公园</div></div>
+            </article>
+            <article class="album-card">
+              <div class="thumb">
+                <img src="https://aka.doubaocdn.com/s/vaCObKLWaJ" alt="花田小径视频">
+                <span class="video-badge">▶ 0:12</span>
+              </div>
+              <div class="meta"><div class="t">花田小径</div><div class="d">3 天前 · 视频</div></div>
+            </article>
+            <article class="album-card">
+              <div class="thumb">
+                <img src="https://aka.doubaocdn.com/s/jDwQepOD9e" alt="夜市小吃街">
+              </div>
+              <div class="meta"><div class="t">夜市小吃街</div><div class="d">上周 · 夜市</div></div>
+            </article>
+            <article class="album-card">
+              <div class="thumb">
+                <img src="https://aka.doubaocdn.com/s/2pYA4fuyXa" alt="茸茸自拍">
+                <span class="fav">♥ 收藏</span>
+              </div>
+              <div class="meta"><div class="t">茸茸的自拍</div><div class="d">上周 · 相册</div></div>
+            </article>
+            <article class="album-card">
+              <div class="thumb">
+                <img src="https://aka.doubaocdn.com/s/xvSyKcG371" alt="新布置留念">
+              </div>
+              <div class="meta"><div class="t">新布置留念</div><div class="d">上周 · 家具收藏</div></div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- 手机端框架 -->
+      <div class="phone-frame">
+        <div class="view active" data-phone-view="decorate" style="width:100%;height:100%;">
+          <aside class="panel decor-left" style="order:2;">
+            <h3>家具道具</h3>
+            <div class="prop-grid">
+              <div class="prop selected">🛋️</div>
+              <div class="prop">🛏️</div>
+              <div class="prop">🪵</div>
+              <div class="prop">🧶</div>
+              <div class="prop">💡</div>
+              <div class="prop">☁️</div>
+            </div>
+          </aside>
+          <div class="panel decor-center" style="order:1;">
+            <div class="room-preview" style="height:320px;">
+              <img src="https://aka.doubaocdn.com/s/dRfurSyRSw" alt="手机端小屋预览">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 地点回忆弹层 -->
+      <div class="memory-modal" id="memory-modal">
+        <div class="modal-mask" data-close></div>
+        <div class="modal-card" role="dialog" aria-modal="true">
+          <header>
+            <div>
+              <h3 id="mm-title"></h3>
+              <div class="muted" id="mm-date"></div>
+            </div>
+            <button class="mm-close" data-close aria-label="关闭">×</button>
+          </header>
+          <div class="mm-grid" id="mm-grid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 视图切换
+    const tabs = document.querySelectorAll('.tab');
+    const views = document.querySelectorAll('.desktop-canvas .view');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        views.forEach(v => v.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('view-' + tab.dataset.view).classList.add('active');
+      });
+    });
+
+    // 设备切换
+    const devBtns = document.querySelectorAll('[data-device-btn]');
+    devBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        devBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.dataset.device = btn.dataset.deviceBtn;
+      });
+    });
+
+    // 聊天演示
+    const windowEl = document.getElementById('chat-window');
+    const replies = [
+      "嗯，我也是这么想的～",
+      "听完心情变好了呢。",
+      "下次一起去吧？",
+      "谢谢你告诉我这些。"
+    ];
+    let replyIdx = 0;
+    function addBubble(text, who) {
+      const b = document.createElement('div');
+      b.className = 'bubble ' + who;
+      b.textContent = text;
+      windowEl.appendChild(b);
+      windowEl.scrollTop = windowEl.scrollHeight;
+    }
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        addBubble(chip.dataset.reply, 'player');
+        addBubble(replies[replyIdx % replies.length], 'rabbit');
+        replyIdx++;
+      });
+    });
+    document.getElementById('send-btn').addEventListener('click', () => {
+      const input = document.querySelector('.chat-input input');
+      if (input.value.trim()) {
+        addBubble(input.value.trim(), 'player');
+        addBubble(replies[replyIdx % replies.length], 'rabbit');
+        replyIdx++;
+        input.value = '';
+      }
+    });
+
+    // 地点回忆：地图点亮节点 / 时间线条目点击回看照片与视频
+    const memories = {
+      fuzhou: { title: '福州 · 小屋周边散步', date: '今天 · 带回合影 1 张', media: [
+        { src: 'https://aka.doubaocdn.com/s/dRfurSyRSw', label: '小屋午后合影', type: 'photo' },
+        { src: 'https://aka.doubaocdn.com/s/lens2cYaIU', label: '周边散步', type: 'video', dur: '0:08' }
+      ]},
+      hangzhou: { title: '杭州 · 西湖边漫步', date: '11 月 23 日 · 花瓣、合影', media: [
+        { src: 'https://aka.doubaocdn.com/s/lens2cYaIU', label: '西湖长椅', type: 'photo' },
+        { src: 'https://aka.doubaocdn.com/s/vaCObKLWaJ', label: '花岸片段', type: 'video', dur: '0:12' }
+      ]},
+      xiamen: { title: '厦门 · 海边夜市', date: '11 月 20 日 · 烤馕、小玩偶', media: [
+        { src: 'https://aka.doubaocdn.com/s/jDwQepOD9e', label: '海边夜市', type: 'photo' },
+        { src: 'https://aka.doubaocdn.com/s/xvSyKcG371', label: '带回的小摆件', type: 'photo' }
+      ]}
+    };
+    const modal = document.getElementById('memory-modal');
+    const mmTitle = document.getElementById('mm-title');
+    const mmDate = document.getElementById('mm-date');
+    const mmGrid = document.getElementById('mm-grid');
+    function openMemory(place) {
+      const m = memories[place];
+      if (!m) return;
+      mmTitle.textContent = m.title;
+      mmDate.textContent = m.date;
+      mmGrid.innerHTML = '';
+      m.media.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'mm-card';
+        const badge = item.type === 'video' ? '<span class="video-badge">▶ ' + item.dur + '</span>' : '';
+        card.innerHTML = '<div class="mm-thumb"><img src="' + item.src + '" alt="' + item.label + '">' + badge + '</div><div class="mm-label">' + item.label + '</div>';
+        mmGrid.appendChild(card);
+      });
+      modal.classList.add('open');
+    }
+    function closeMemory() { modal.classList.remove('open'); }
+    document.addEventListener('click', e => {
+      if (e.target.closest('[data-close]')) { closeMemory(); return; }
+      const placeEl = e.target.closest('[data-place]');
+      if (placeEl) openMemory(placeEl.dataset.place);
+    });
+  </script>
+</body>
+</html>
