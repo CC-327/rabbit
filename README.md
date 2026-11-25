@@ -70,34 +70,24 @@ npx serve .
 
 ## 部署到 GitHub Pages
 
-### 1. 在 GitHub 新建空仓库
+本仓库已部署到 GitHub Pages：
 
-例如命名为 `rabbit-cottage-prototype`，**不要**勾选 “Add a README”、不要添加 `.gitignore` 或 License，保持空仓库。
+- 仓库：https://github.com/CC-327/rabbit
+- 在线预览：**https://cc-327.github.io/rabbit/**
 
-### 2. 推送代码
+Pages 配置：Source 为 `Deploy from a branch`，Branch 选 `main`、目录 `/ (root)`。
 
-在本目录打开终端：
+### 后续重新推送
+
+在本目录打开终端，提交改动后推送即可：
 
 ```bash
-git init
 git add .
-git commit -m "feat: 兔茸小屋概念原型（装扮/聊天/出门/相册/回忆回看，双端布局）"
-git branch -M main
-git remote add origin https://github.com/<你的用户名>/rabbit-cottage-prototype.git
-git push -u origin main
+git commit -m "update: 描述本次改动"
+git push origin main
 ```
 
-### 3. 开启 Pages
-
-仓库 **Settings → Pages**：
-
-- Source 选择 `Deploy from a branch`
-- Branch 选择 `main`，目录选择 `/ (root)`
-- 保存后等待几分钟，即可通过以下地址在线预览：
-
-```
-https://<你的用户名>.github.io/rabbit-cottage-prototype/
-```
+推送后 Pages 会自动重新构建，稍等片刻在线地址即会刷新。
 
 ## 素材说明
 
