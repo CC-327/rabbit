@@ -40,13 +40,16 @@
     }
     .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; }
     .logo .dot { width: 34px; height: 34px; border-radius: 50%; background: var(--pink); display: grid; place-items: center; font-size: 18px; }
-    .tabs { display: flex; gap: 10px; margin-left: 24px; }
+    .tabs { display: flex; gap: 10px; margin-left: 12px; }
     .tab {
       border: none; background: #F3E7D8; color: var(--text-soft);
       padding: 10px 20px; border-radius: 16px; font-size: 16px; cursor: pointer;
       transition: all .15s ease;
     }
     .tab.active { background: var(--yellow); color: var(--brown); font-weight: 600; }
+    .save-actions { display: flex; gap: 8px; }
+    .ghost-btn { border: 2px solid #F3E7D8; background: var(--card); color: var(--brown); border-radius: 12px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
+    .ghost-btn:hover { background: #FBF1E6; }
     .device-switch { margin-left: auto; display: flex; gap: 8px; background: #F3E7D8; padding: 6px; border-radius: 14px; }
     .device-switch button { border: none; background: transparent; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; color: var(--text-soft); }
     .device-switch button.active { background: var(--card); color: var(--brown); font-weight: 600; box-shadow: 0 2px 6px rgba(122,90,68,.15); }
@@ -66,47 +69,57 @@
 
     /* ===== 装扮视图 ===== */
     #view-decorate { }
-    .decor-left { width: 250px; flex: 0 0 250px; display: flex; flex-direction: column; gap: 16px; }
+    .decor-left { width: 250px; flex: 0 0 250px; display: flex; flex-direction: column; gap: 16px; overflow: auto; }
     .prop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .prop {
       background: #FBF1E6; border-radius: 16px; aspect-ratio: 1;
       display: grid; place-items: center; font-size: 24px; cursor: pointer; border: 2px solid transparent;
+      position: relative;
     }
     .prop.selected { border-color: var(--yellow); background: #FFF3D9; }
+    .prop.placed::after { content: "✓"; position: absolute; top: 4px; right: 6px; font-size: 11px; color: var(--brown); }
     .decor-center { flex: 1; display: flex; flex-direction: column; gap: 14px; }
     .room-preview {
       flex: 1; border-radius: var(--radius); overflow: hidden; position: relative;
       background: #EAD9C6;
     }
     .room-preview img { width: 100%; height: 100%; object-fit: cover; }
-    .room-preview .room-label {
+    .room-label {
       position: absolute; left: 16px; bottom: 16px; background: rgba(255,247,238,.9);
-      padding: 8px 14px; border-radius: 12px; font-size: 14px;
+      padding: 8px 14px; border-radius: 12px; font-size: 14px; z-index: 2;
     }
+    .room-slots { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(2,1fr); gap: 12px; padding: 18px; z-index: 1; }
+    .slot {
+      border: 2px dashed rgba(122,90,68,.28); border-radius: 16px;
+      display: grid; place-items: center; font-size: 30px; cursor: pointer;
+      background: rgba(255,247,238,.35); position: relative;
+    }
+    .slot.occupied { border-style: solid; background: rgba(255,243,217,.82); }
+    .slot .slot-name { position: absolute; bottom: 6px; font-size: 11px; color: var(--text-soft); }
     .decor-right { width: 270px; flex: 0 0 270px; display: flex; flex-direction: column; gap: 16px; }
     .avatar-card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
     .avatar-card img { width: 150px; height: 150px; object-fit: cover; border-radius: 20px; }
     .avatar-card .name { font-size: 18px; font-weight: 600; }
     .affection { width: 100%; }
     .affection .bar { height: 12px; border-radius: 8px; background: #F3E7D8; overflow: hidden; }
-    .affection .fill { height: 100%; width: 68%; background: linear-gradient(90deg, var(--pink), var(--yellow)); border-radius: 8px; }
+    .affection .fill { height: 100%; width: 68%; background: linear-gradient(90deg, var(--pink), var(--yellow)); border-radius: 8px; transition: width .3s; }
     .stat-row { display: flex; justify-content: space-between; font-size: 14px; }
     .outfit-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-    .outfit { background: #FBF1E6; border-radius: 14px; aspect-ratio: 1; display: grid; place-items: center; font-size: 20px; }
+    .outfit { background: #FBF1E6; border-radius: 14px; aspect-ratio: 1; display: grid; place-items: center; font-size: 20px; cursor: pointer; border: 2px solid transparent; }
+    .outfit.selected { border-color: var(--pink); background: #FFEDF2; }
 
     /* ===== 聊天视图 ===== */
     #view-chat { }
     .chat-left { width: 300px; flex: 0 0 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
     .chat-left img { width: 180px; height: 180px; object-fit: cover; border-radius: 24px; }
     .chat-main { flex: 1; display: flex; flex-direction: column; gap: 14px; }
-    .chat-window { flex: 1; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+    .chat-window { flex: 1; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
     .bubble { max-width: 62%; padding: 14px 18px; border-radius: 18px; font-size: 16px; line-height: 1.5; }
     .bubble.rabbit { background: #FFF3D9; align-self: flex-start; border-bottom-left-radius: 6px; }
     .bubble.player { background: var(--blue); align-self: flex-end; border-bottom-right-radius: 6px; }
     .chat-topics { display: flex; flex-wrap: wrap; gap: 10px; }
     .chip { border: 2px solid var(--yellow); background: var(--card); color: var(--brown); padding: 10px 16px; border-radius: 16px; font-size: 15px; cursor: pointer; }
     .chip:hover { background: #FFF3D9; }
-    .chip.active { background: var(--yellow); border-color: var(--yellow); font-weight: 600; }
     .chat-input { display: flex; gap: 10px; }
     .chat-input input { flex: 1; border: 2px solid #F3E7D8; border-radius: 16px; padding: 12px 16px; font-size: 15px; outline: none; }
     .chat-input button { border: none; background: var(--pink); color: #fff; border-radius: 16px; padding: 12px 22px; font-size: 15px; cursor: pointer; }
@@ -232,11 +245,17 @@
         <button class="tab" data-view="goout">出门</button>
         <button class="tab" data-view="album">相册</button>
       </nav>
+      <div class="save-actions">
+        <button class="ghost-btn" id="export-btn">⬇ 导出存档</button>
+        <button class="ghost-btn" id="import-btn">⬆ 导入存档</button>
+        <button class="ghost-btn" id="reset-btn">↺ 重置</button>
+        <input type="file" id="import-file" accept="application/json" hidden>
+      </div>
       <div class="device-switch">
         <button class="active" data-device-btn="desktop">电脑端</button>
         <button data-device-btn="mobile">手机端</button>
       </div>
-      <span class="prototype-tag">概念原型 · 非真实游戏数据</span>
+      <span class="prototype-tag">本地原型 · 数据存于浏览器</span>
     </header>
 
     <section class="stage">
@@ -246,44 +265,31 @@
         <div class="view active" id="view-decorate">
           <aside class="panel decor-left">
             <h3>家具道具</h3>
-            <div class="prop-grid">
-              <div class="prop selected" title="云朵沙发">🛋️</div>
-              <div class="prop" title="星星小床">🛏️</div>
-              <div class="prop" title="圆形茶几">🪵</div>
-              <div class="prop" title="长绒地毯">🧶</div>
-              <div class="prop" title="蘑菇台灯">💡</div>
-              <div class="prop" title="云朵挂饰">☁️</div>
-              <div class="prop" title="星星挂饰">⭐</div>
-              <div class="prop" title="绿植">🪴</div>
-              <div class="prop" title="气球">🎈</div>
-            </div>
+            <div class="prop-grid" id="prop-grid"></div>
             <h3>服饰配件</h3>
-            <div class="outfit-grid">
-              <div class="outfit">🧣</div>
-              <div class="outfit">🎀</div>
-              <div class="outfit">👒</div>
-            </div>
+            <div class="outfit-grid" id="outfit-grid"></div>
           </aside>
 
           <div class="panel decor-center">
             <div class="room-preview">
               <img src="https://aka.doubaocdn.com/s/dRfurSyRSw" alt="小屋装扮预览">
-              <div class="room-label">当前房间 · 棉花糖午后</div>
+              <div class="room-slots" id="room-slots"></div>
+              <div class="room-label" id="room-label">当前房间 · 棉花糖午后</div>
             </div>
           </div>
 
           <aside class="panel decor-right">
             <div class="avatar-card">
               <img src="https://aka.doubaocdn.com/s/2pYA4fuyXa" alt="兔子角色">
-              <div class="name">茸茸</div>
+              <div class="name">茸茸 <span id="avatar-outfit"></span></div>
               <div class="affection">
-                <div class="bar"><div class="fill"></div></div>
-                <div class="stat-row" style="margin-top:6px;"><span>好感度</span><span>68 / 100</span></div>
+                <div class="bar"><div class="fill" id="affection-fill"></div></div>
+                <div class="stat-row" style="margin-top:6px;"><span>好感度</span><span id="affection-text">68 / 100</span></div>
               </div>
             </div>
             <div class="stat-row"><span>金币</span><span>1,280</span></div>
-            <div class="stat-row"><span>已收集家具</span><span>24 件</span></div>
-            <p class="muted">拖动家具到房间即可摆放；成套布置会触发兔子专属动作。</p>
+            <div class="stat-row"><span>已摆放家具</span><span id="placed-count">0 件</span></div>
+            <p class="muted">先点选左侧家具，再点房间空位摆放；点已摆放的家具可移除。布置会自动保存在本机。</p>
           </aside>
         </div>
 
@@ -303,26 +309,20 @@
               </div>
               <div class="mem-line">
                 <span class="mem-label">聊过</span>
-                <span class="mem-tag">云朵抱枕</span>
-                <span class="mem-tag">房间布置</span>
-                <span class="mem-tag">天气</span>
+                <span id="mem-topics"></span>
               </div>
             </div>
           </aside>
           <div class="panel chat-main">
-            <div class="chat-window" id="chat-window">
-              <div class="bubble rabbit">回来啦？今天小屋晒到太阳啦 ☁️</div>
-              <div class="bubble player">嗯，我给你换了新的云朵抱枕。</div>
-              <div class="bubble rabbit">软软的，我很喜欢！窗边的茶杯还温温的。</div>
-            </div>
-            <div class="chat-topics">
-              <button class="chip" data-reply="今天在外面遇到什么好玩的啦？">今天玩得开心吗</button>
-              <button class="chip" data-reply="最喜欢哪个房间角落呀？">聊聊房间布置</button>
-              <button class="chip" data-reply="想吃什么点心呢？">想吃什么点心</button>
-              <button class="chip" data-reply="今天天气真好呢。">说说天气</button>
+            <div class="chat-window" id="chat-window"></div>
+            <div class="chat-topics" id="chat-topics">
+              <button class="chip" data-topic="今天在外面遇到什么好玩的啦？">今天玩得开心吗</button>
+              <button class="chip" data-topic="最喜欢哪个房间角落呀？">聊聊房间布置</button>
+              <button class="chip" data-topic="你想吃什么点心呢？">想吃什么点心</button>
+              <button class="chip" data-topic="今天天气真好呢。">说说天气</button>
             </div>
             <div class="chat-input">
-              <input type="text" placeholder="和茸茸说点什么…">
+              <input type="text" id="chat-input" placeholder="和茸茸说点什么…">
               <button id="send-btn">发送</button>
             </div>
           </div>
@@ -336,7 +336,6 @@
               <div class="map-stage">
                 <svg viewBox="0 0 360 300" role="img" aria-label="足迹示意地图">
                   <path d="M168 78 L196 178 L196 214 L178 236" fill="none" stroke="#FFD98A" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>
-                  <!-- 未前往 -->
                   <g fill="#D8C6B4">
                     <circle cx="180" cy="40" r="7"/>
                     <circle cx="168" cy="78" r="7"/>
@@ -351,7 +350,6 @@
                     <text x="51" y="164">成都</text>
                     <text x="112" y="214">广州</text>
                   </g>
-                  <!-- 已点亮（可点击回看回忆） -->
                   <g class="lit" data-place="hangzhou">
                     <circle cx="196" cy="178" r="8" fill="#FFD98A" stroke="#fff" stroke-width="2"/>
                     <text x="210" y="182" fill="#7A5A44" font-size="12" font-weight="600">杭州</text>
@@ -528,14 +526,7 @@
         <div class="view active" data-phone-view="decorate" style="width:100%;height:100%;">
           <aside class="panel decor-left" style="order:2;">
             <h3>家具道具</h3>
-            <div class="prop-grid">
-              <div class="prop selected">🛋️</div>
-              <div class="prop">🛏️</div>
-              <div class="prop">🪵</div>
-              <div class="prop">🧶</div>
-              <div class="prop">💡</div>
-              <div class="prop">☁️</div>
-            </div>
+            <div class="prop-grid" id="prop-grid-mobile"></div>
           </aside>
           <div class="panel decor-center" style="order:1;">
             <div class="room-preview" style="height:320px;">
@@ -562,7 +553,326 @@
   </main>
 
   <script>
-    // 视图切换
+    /* ============ 数据目录 ============ */
+    const PROPS = [
+      { id: 'sofa',   emoji: '🛋️', name: '云朵沙发' },
+      { id: 'bed',    emoji: '🛏️', name: '星星小床' },
+      { id: 'table',  emoji: '🪵',  name: '圆形茶几' },
+      { id: 'rug',    emoji: '🧶',  name: '长绒地毯' },
+      { id: 'lamp',   emoji: '💡', name: '蘑菇台灯' },
+      { id: 'cloud',  emoji: '☁️', name: '云朵挂饰' },
+      { id: 'star',   emoji: '⭐', name: '星星挂饰' },
+      { id: 'plant',  emoji: '🪴', name: '绿植' },
+      { id: 'balloon',emoji: '🎈', name: '气球' }
+    ];
+    const OUTFITS = [
+      { id: 'scarf', emoji: '🧣', name: '围巾' },
+      { id: 'bow',   emoji: '🎀', name: '蝴蝶结' },
+      { id: 'hat',   emoji: '👒', name: '小帽子' }
+    ];
+    const SLOT_COUNT = 6;
+
+    /* ============ 存档 ============ */
+    const SAVE_KEY = 'rabbit_cottage_save_v1';
+
+    function defaultSave() {
+      return {
+        decor: { slots: {}, outfit: null },
+        chat: [
+          { who: 'rabbit', text: '回来啦？今天小屋晒到太阳啦 ☁️' },
+          { who: 'player', text: '嗯，我给你换了新的云朵抱枕。' },
+          { who: 'rabbit', text: '软软的，我很喜欢！窗边的茶杯还温温的。' }
+        ],
+        memory: { topics: ['云朵抱枕', '房间布置', '天气'] },
+        affection: 68
+      };
+    }
+    function loadSave() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return defaultSave();
+        const data = JSON.parse(raw);
+        const d = defaultSave();
+        return {
+          decor: { slots: data.decor?.slots || {}, outfit: data.decor?.outfit || null },
+          chat: Array.isArray(data.chat) ? data.chat : d.chat,
+          memory: { topics: Array.isArray(data.memory?.topics) ? data.memory.topics : d.memory.topics },
+          affection: typeof data.affection === 'number' ? data.affection : d.affection
+        };
+      } catch (e) { return defaultSave(); }
+    }
+    let save = loadSave();
+    let persistTimer = null;
+    function persist() {
+      clearTimeout(persistTimer);
+      persistTimer = setTimeout(() => {
+        try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {}
+      }, 150);
+    }
+
+    /* ============ 状态 ============ */
+    let selectedProp = null;
+    let selectedOutfit = save.decor.outfit;
+
+    /* ============ 装扮渲染 ============ */
+    const propGrid = document.getElementById('prop-grid');
+    const outfitGrid = document.getElementById('outfit-grid');
+    const roomSlots = document.getElementById('room-slots');
+
+    function placedPropIds() {
+      return Object.values(save.decor.slots).filter(Boolean);
+    }
+
+    function renderDecor() {
+      // 家具栏
+      propGrid.innerHTML = '';
+      PROPS.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'prop' + (selectedProp === p.id ? ' selected' : '') + (placedPropIds().includes(p.id) ? ' placed' : '');
+        el.textContent = p.emoji;
+        el.title = p.name;
+        el.dataset.id = p.id;
+        el.addEventListener('click', () => {
+          selectedProp = selectedProp === p.id ? null : p.id;
+          renderDecor();
+        });
+        propGrid.appendChild(el);
+      });
+      // 服饰栏
+      outfitGrid.innerHTML = '';
+      OUTFITS.forEach(o => {
+        const el = document.createElement('div');
+        el.className = 'outfit' + (selectedOutfit === o.id ? ' selected' : '');
+        el.textContent = o.emoji;
+        el.title = o.name;
+        el.dataset.id = o.id;
+        el.addEventListener('click', () => {
+          selectedOutfit = selectedOutfit === o.id ? null : o.id;
+          save.decor.outfit = selectedOutfit;
+          persist();
+          renderDecor();
+        });
+        outfitGrid.appendChild(el);
+      });
+      // 房间槽位
+      roomSlots.innerHTML = '';
+      for (let i = 0; i < SLOT_COUNT; i++) {
+        const pid = save.decor.slots[i];
+        const prop = PROPS.find(p => p.id === pid);
+        const slot = document.createElement('div');
+        slot.className = 'slot' + (prop ? ' occupied' : '');
+        slot.dataset.index = i;
+        if (prop) {
+          slot.innerHTML = prop.emoji + '<span class="slot-name">' + prop.name + '</span>';
+        }
+        slot.addEventListener('click', () => onSlotClick(i));
+        roomSlots.appendChild(slot);
+      }
+      // 右侧信息
+      const outfit = OUTFITS.find(o => o.id === selectedOutfit);
+      document.getElementById('avatar-outfit').textContent = outfit ? ' ' + outfit.emoji : '';
+      document.getElementById('placed-count').textContent = placedPropIds().length + ' 件';
+      document.getElementById('affection-fill').style.width = save.affection + '%';
+      document.getElementById('affection-text').textContent = save.affection + ' / 100';
+    }
+
+    function onSlotClick(index) {
+      const current = save.decor.slots[index];
+      if (current) {
+        // 移除已摆放家具
+        delete save.decor.slots[index];
+        persist();
+        renderDecor();
+        return;
+      }
+      if (!selectedProp) return;
+      // 同一家具不重复摆放
+      if (placedPropIds().includes(selectedProp)) return;
+      save.decor.slots[index] = selectedProp;
+      persist();
+      renderDecor();
+    }
+
+    /* ============ 聊天 ============ */
+    const chatWindow = document.getElementById('chat-window');
+    const chatInput = document.getElementById('chat-input');
+
+    const RULES = [
+      { label: '天气', keys: ['天气', '天晴', '太阳', '下雨', '冷', '热', '风'], replies: [
+        '今天的风软软的，窗边的窗帘一直在轻轻晃呢。',
+        '出太阳的时候，地板上都是暖黄的光斑，最适合发呆啦。',
+        '不管外面是晴是雨，小屋里面都暖乎乎的哦。'
+      ]},
+      { label: '点心', keys: ['吃', '点心', '饿', '好吃', '馕', '饼', '零食'], replies: [
+        '想吃甜的还是咸的？我记得你上次带回来的烤馕还剩一点呢。',
+        '泡一杯热茶，配小点心，坐在沙发上慢慢聊好不好？',
+        '肚子饿的时候，心情也会变懒，我们先垫一点东西吧。'
+      ]},
+      { label: '房间布置', keys: ['布置', '房间', '沙发', '床', '抱枕', '装饰', '摆', '家具', '灯'], replies: [
+        '这个角落摆上绿植之后，空气都像变清新了呢。',
+        '你挑的云朵抱枕软软的，我一靠上去就不想起来啦。',
+        '我们再慢慢添几件小物，小屋会越来越像我们的家。'
+      ]},
+      { label: '出门游玩', keys: ['花', '公园', '散步', '出门', '玩', '蝴蝶', '湖'], replies: [
+        '下次去公园的话，我想再捡一片不一样形状的叶子回来。',
+        '花田里的蝴蝶认得我啦，下次说不定会停在我耳朵上。',
+        '出门走走很开心，不过回来看到小屋亮着灯，也特别安心。'
+      ]},
+      { label: '夜市', keys: ['夜市', '馕', '饼', '玩偶', '热闹'], replies: [
+        '夜市的灯一串串的，像把星星挂在了街上。',
+        '那个小玩偶我摆在床头了，看着它就想起那晚的热闹。'
+      ]},
+      { label: '心情', keys: ['心情', '开心', '难过', '累', '寂寞', '孤独', '烦', '难过'], replies: [
+        '不管今天怎么样，回来有我陪着你呢。',
+        '累了就靠在沙发上歇一会儿，我不吵你。',
+        '你的心情我都有在认真听哦，想说多久都可以。'
+      ]},
+      { label: '打招呼', keys: ['名字', '你是谁', '茸茸', '你好', '嗨'], replies: [
+        '我是茸茸呀，一直待在小屋里等你回来。',
+        '认出我啦？今天也想和你待在一起。'
+      ]}
+    ];
+    const FALLBACK = [
+      '嗯嗯，我在听呢，再多跟我说一点吧～',
+      '这个我还不太懂，不过和你聊天我很开心。',
+      '下次我们在窗边慢慢聊这个好不好？',
+      '我把这句话记在小本本上啦，以后常记得。'
+    ];
+
+    function pickRule(text) {
+      const lower = text.toLowerCase();
+      for (const rule of RULES) {
+        if (rule.keys.some(k => lower.includes(k))) return rule;
+      }
+      return null;
+    }
+    function rememberTopic(label) {
+      if (label && !save.memory.topics.includes(label) && save.memory.topics.length < 6) {
+        save.memory.topics.push(label);
+      }
+    }
+    function randomOf(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function renderChat() {
+      chatWindow.innerHTML = '';
+      save.chat.forEach(item => appendBubble(item.who, item.text, false));
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+      renderMemoryTopics();
+    }
+    function appendBubble(who, text, scroll = true) {
+      const b = document.createElement('div');
+      b.className = 'bubble ' + who;
+      b.textContent = text;
+      chatWindow.appendChild(b);
+      if (scroll) chatWindow.scrollTop = chatWindow.scrollHeight;
+      return b;
+    }
+    function typeInto(bubbleEl, text, done) {
+      bubbleEl.textContent = '';
+      let i = 0;
+      const timer = setInterval(() => {
+        bubbleEl.textContent = text.slice(0, ++i);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+        if (i >= text.length) { clearInterval(timer); done && done(); }
+      }, 35);
+    }
+
+    function sendMessage(text) {
+      text = (text || '').trim();
+      if (!text) return;
+      save.chat.push({ who: 'player', text });
+      persist();
+      renderChat();
+
+      const rule = pickRule(text);
+      const reply = rule ? randomOf(rule.replies) : randomOf(FALLBACK);
+      if (rule) rememberTopic(rule.label);
+
+      // 好感度小幅增长，上限 100
+      save.affection = Math.min(100, save.affection + 1);
+      persist();
+
+      const bubble = appendBubble('rabbit', '');
+      typeInto(bubble, reply, () => {
+        save.chat.push({ who: 'rabbit', text: reply });
+        persist();
+        renderMemoryTopics();
+        document.getElementById('affection-fill').style.width = save.affection + '%';
+        document.getElementById('affection-text').textContent = save.affection + ' / 100';
+      });
+    }
+
+    function renderMemoryTopics() {
+      const box = document.getElementById('mem-topics');
+      box.innerHTML = '';
+      save.memory.topics.forEach(t => {
+        const tag = document.createElement('span');
+        tag.className = 'mem-tag';
+        tag.textContent = t;
+        box.appendChild(tag);
+      });
+    }
+
+    document.getElementById('send-btn').addEventListener('click', () => {
+      sendMessage(chatInput.value);
+      chatInput.value = '';
+    });
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { sendMessage(chatInput.value); chatInput.value = ''; }
+    });
+    document.getElementById('chat-topics').addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (chip) sendMessage(chip.dataset.topic);
+    });
+
+    /* ============ 存档导入 / 导出 / 重置 ============ */
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(save, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'rabbit-cottage-save.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+    document.getElementById('import-btn').addEventListener('click', () => {
+      document.getElementById('import-file').click();
+    });
+    document.getElementById('import-file').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!data.decor || !Array.isArray(data.chat)) throw new Error('格式不对');
+          save = {
+            decor: { slots: data.decor.slots || {}, outfit: data.decor.outfit || null },
+            chat: data.chat,
+            memory: { topics: Array.isArray(data.memory?.topics) ? data.memory.topics : [] },
+            affection: typeof data.affection === 'number' ? data.affection : 68
+          };
+          selectedOutfit = save.decor.outfit;
+          persist();
+          renderDecor(); renderChat();
+          alert('存档导入成功');
+        } catch (err) {
+          alert('导入失败：文件不是有效的存档');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      if (!confirm('确定要清空当前布置和聊天记录，恢复示例状态吗？')) return;
+      localStorage.removeItem(SAVE_KEY);
+      save = defaultSave();
+      selectedOutfit = save.decor.outfit;
+      selectedProp = null;
+      renderDecor(); renderChat();
+    });
+
+    /* ============ 视图 / 设备切换 ============ */
     const tabs = document.querySelectorAll('.tab');
     const views = document.querySelectorAll('.desktop-canvas .view');
     tabs.forEach(tab => {
@@ -573,8 +883,6 @@
         document.getElementById('view-' + tab.dataset.view).classList.add('active');
       });
     });
-
-    // 设备切换
     const devBtns = document.querySelectorAll('[data-device-btn]');
     devBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -584,40 +892,7 @@
       });
     });
 
-    // 聊天演示
-    const windowEl = document.getElementById('chat-window');
-    const replies = [
-      "嗯，我也是这么想的～",
-      "听完心情变好了呢。",
-      "下次一起去吧？",
-      "谢谢你告诉我这些。"
-    ];
-    let replyIdx = 0;
-    function addBubble(text, who) {
-      const b = document.createElement('div');
-      b.className = 'bubble ' + who;
-      b.textContent = text;
-      windowEl.appendChild(b);
-      windowEl.scrollTop = windowEl.scrollHeight;
-    }
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        addBubble(chip.dataset.reply, 'player');
-        addBubble(replies[replyIdx % replies.length], 'rabbit');
-        replyIdx++;
-      });
-    });
-    document.getElementById('send-btn').addEventListener('click', () => {
-      const input = document.querySelector('.chat-input input');
-      if (input.value.trim()) {
-        addBubble(input.value.trim(), 'player');
-        addBubble(replies[replyIdx % replies.length], 'rabbit');
-        replyIdx++;
-        input.value = '';
-      }
-    });
-
-    // 地点回忆：地图点亮节点 / 时间线条目点击回看照片与视频
+    /* ============ 地点回忆弹层 ============ */
     const memories = {
       fuzhou: { title: '福州 · 小屋周边散步', date: '今天 · 带回合影 1 张', media: [
         { src: 'https://aka.doubaocdn.com/s/dRfurSyRSw', label: '小屋午后合影', type: 'photo' },
@@ -657,6 +932,10 @@
       const placeEl = e.target.closest('[data-place]');
       if (placeEl) openMemory(placeEl.dataset.place);
     });
+
+    /* ============ 初始化 ============ */
+    renderDecor();
+    renderChat();
   </script>
 </body>
 </html>
